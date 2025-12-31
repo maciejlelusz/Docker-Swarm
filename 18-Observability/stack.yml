@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    configs:
+      - source: prom_cfg
+        target: /etc/prometheus/prometheus.yml
+    networks: [mon]
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    networks: [mon]
+
+networks:
+  mon:
+    driver: overlay
+
+configs:
+  prom_cfg:
+    file: ./prometheus.yml

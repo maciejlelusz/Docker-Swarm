@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  web:
+    image: nginx:alpine
+    networks: [appnet]
+  curl:
+    image: curlimages/curl:8.6.0
+    command: ["sh","-lc","while true; do curl -s http://web >/dev/null; echo ok; sleep 2; done"]
+    networks: [appnet]
+
+networks:
+  appnet:
+    driver: overlay

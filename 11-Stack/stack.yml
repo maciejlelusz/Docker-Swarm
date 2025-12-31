@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  whoami:
+    image: traefik/whoami:v1.10.3
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 3s
+      restart_policy:
+        condition: on-failure
+    networks: [app]
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8088:80"
+    deploy:
+      replicas: 2
+    networks: [app]
+    configs:
+      - source: nginx_conf
+        target: /etc/nginx/conf.d/default.conf
+
+networks:
+  app:
+    driver: overlay
+
+configs:
+  nginx_conf:
+    file: ./nginx/default.conf
